@@ -83,7 +83,7 @@ Where the `--protein` argument is for the target `.pdbqt` file, the `--box_min` 
 You can use [make-init-molecule.ipynb](./tests/make-init-molecule.ipynb) to create `init_search_molecule.pkl`. The `.pkl` file will be saved in `tests/init-molecule`.
 
 ##### Choosing a suitable noise schedule
-You can use [noising-denoising_test.py](./tests/noising-denoising_test.py) and [noising-denoising_analysis.py](./tests/noising-denoising_analysis.ipynb) to exmaine the relationship between diffusion timestep and molecular similarity, validity and other optimization/generation related metrics.
+You can use [noising-denoising_test.py](./tests/noising-denoising_test.py) and [noising-denoising_analysis.ipynb](./tests/noising-denoising_analysis.ipynb) to exmaine the relationship between diffusion timestep and molecular similarity, validity and other optimization/generation related metrics.
 
 ##### Create the main script
 The main script contains the following required arguments:
