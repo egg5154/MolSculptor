@@ -28,7 +28,8 @@ cp DSDP ../../
 ```
 Finally we need to get the model parameters for auto-encoder model and diffusion transformer model:
 ```
-
+wget -P checkpoints/auto-encoder https://zenodo.org/records/15120425/files/ae_params_step265000.pkl
+wget -P checkpoints/diffusion-transformer https://zenodo.org/records/15120425/files/ae_params_step1000000.pkl
 ```
 ## Molsculptor's current capabilities
 The test cases in out paper is saved in [cases](./cases), including three dual-target inhibitor design tasks and one PI3K selective inhibitor design task.
