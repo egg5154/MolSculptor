@@ -26,6 +26,7 @@ git clone https://github.com/PKUGaoGroup/DSDP.git DSDP_main
 cd DSDP_main/DSDP_redocking/
 make
 cp DSDP ../../
+cd ../../../
 ```
 Finally we need to get the model parameters for auto-encoder model and diffusion transformer model:
 ```
