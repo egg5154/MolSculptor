@@ -13,6 +13,7 @@ Running example scripts in [cases](./cases) requires:
 We also provide [requirements.txt](./requirements.txt) to make sure you can quickly create a compatible environment by the following steps:
 ```
 conda create -n molsculptor_env python=3.12
+conda activate molsculptor_env
 pip install -r requirements.txt
 conda install openbabel=3.1.1 -c conda-forge
 ```
