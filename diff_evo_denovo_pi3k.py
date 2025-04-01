@@ -1,7 +1,5 @@
 """
-    Main script for diffusion ES evolution.
-    DiffusionES From: https://github.com/bhyang/diffusion-es.
-    Note that this code is for single device!
+    Main script for PI3K de novo design.
 """
 
 import os
@@ -461,8 +459,8 @@ if __name__ == '__main__':
     parser.add_argument('--np_random_seed', type = int, default = 42)
     parser.add_argument('--total_step', type = int, required = True)
     parser.add_argument('--device_batch_size', type = int, required = True)
-    parser.add_argument('--num_latent_tokens', type = int, required = True)
-    parser.add_argument('--dim_latent', type = int, required = True)
+    parser.add_argument('--num_latent_tokens', type = int, default = 16)
+    parser.add_argument('--dim_latent', type = int, default = 32)
     parser.add_argument('--eq_steps', type = int, default = 10)
     parser.add_argument('--callback_step', type = int, default = 10)
     parser.add_argument('--beam_size', type = int, default = 5)

@@ -2,7 +2,7 @@
 
 export SCRIPT_DIR=$(dirname $(readlink -f $0))
 python -u $SCRIPT_DIR/../../diff_evo_denovo_pi3k.py \
-    --params_path $SCRIPT_DIR/../../checkpoints/diffusion-transformer/params_step1000000.pkl \
+    --params_path $SCRIPT_DIR/../../checkpoints/diffusion-transformer/dit_params_step265000.pkl \
     --config_path $SCRIPT_DIR/../../checkpoints/diffusion-transformer/config.pkl \
     --logger_path $SCRIPT_DIR/test/Logs.txt \
     --save_path $SCRIPT_DIR/test \
@@ -17,7 +17,7 @@ python -u $SCRIPT_DIR/../../diff_evo_denovo_pi3k.py \
     --beam_size 4 \
     --sampling_method beam \
     --vae_config_path $SCRIPT_DIR/../../checkpoints/auto-encoder/config.pkl \
-    --vae_params_path $SCRIPT_DIR/../../checkpoints/auto-encoder/params_step265000.pkl \
+    --vae_params_path $SCRIPT_DIR/../../checkpoints/auto-encoder/ae_params_step265000.pkl \
     --alphabet_path $SCRIPT_DIR/../../train/smiles_alphabet.pkl \
     --init_molecule_path $SCRIPT_DIR/padding_molecule_propane.pkl
 exit
