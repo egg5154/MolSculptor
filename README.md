@@ -64,7 +64,7 @@ For dual-inhibitor optimization task, you will need:
 ##### Creating `.pdbqt` file for target proteins
 You can use [openbabel](https://github.com/openbabel/openbabel) to create the protein `.pdbqt` file from a sanitized `.pdb` file:
 ```
-obabel -ipdb xxx.pdb -opdbqt xxx.pdbqt -h
+obabel -ipdb xxx.pdb -opdbqt xxx.pdbqt -p 7.4
 ```
 ##### Creating DSDP docking scripts
 The general script format is as follows (assume this script is in `cases/your_own_cases` folder):
