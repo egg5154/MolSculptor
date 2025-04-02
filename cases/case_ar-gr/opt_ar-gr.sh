@@ -2,8 +2,8 @@
 
 export SCRIPT_DIR=$(dirname $(readlink -f $0))
 python -u $SCRIPT_DIR/../../diff_evo_opt_dual.py \
-    --params_path $SCRIPT_DIR/../../checkpoints/diffusion-transformer/dit_params_step1000000.pkl \
-    --config_path $SCRIPT_DIR/../../checkpoints/diffusion-transformer/config.pkl \
+    --params_path $SCRIPT_DIR/../../checkpoints/diffusion-transformer/dit_params_opt.pkl \
+    --config_path $SCRIPT_DIR/../../checkpoints/diffusion-transformer/config_opt.pkl \
     --logger_path $SCRIPT_DIR/test/Logs.txt \
     --save_path $SCRIPT_DIR/test \
     --dsdp_script_path_1 $SCRIPT_DIR/dsdp_ar.sh \
@@ -19,7 +19,7 @@ python -u $SCRIPT_DIR/../../diff_evo_opt_dual.py \
     --dim_latent 32 \
     --eq_steps 10 \
     --vae_config_path $SCRIPT_DIR/../../checkpoints/auto-encoder/config.pkl \
-    --vae_params_path $SCRIPT_DIR/../../checkpoints/auto-encoder/ae_params_step265000.pkl \
+    --vae_params_path $SCRIPT_DIR/../../checkpoints/auto-encoder/ae_params_opt.pkl \
     --alphabet_path $SCRIPT_DIR/../../train/smiles_alphabet.pkl \
     --init_molecule_path $SCRIPT_DIR/init_search_molecule.pkl \
     --sub_smiles 'NC(=O)c1cccc(S(=O)(=O)N2CCCc3ccccc32)c1'

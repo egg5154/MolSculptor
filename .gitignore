@@ -3,4 +3,5 @@
 **/init-molecule
 dsdp/DSDP
 dsdp/DSDP_main
+cases/**/test
 **params**
