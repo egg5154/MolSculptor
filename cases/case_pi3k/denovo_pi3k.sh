@@ -2,15 +2,15 @@
 
 export SCRIPT_DIR=$(dirname $(readlink -f $0))
 python -u $SCRIPT_DIR/../../diff_evo_denovo_pi3k.py \
-    --params_path $SCRIPT_DIR/../../checkpoints/diffusion-transformer/dit_params_step265000.pkl \
+    --params_path $SCRIPT_DIR/../../checkpoints/diffusion-transformer/dit_params_step1000000.pkl \
     --config_path $SCRIPT_DIR/../../checkpoints/diffusion-transformer/config.pkl \
     --logger_path $SCRIPT_DIR/test/Logs.txt \
     --save_path $SCRIPT_DIR/test \
     --random_seed 6666 \
     --np_random_seed 6666 \
     --total_step 30 \
-    --device_batch_size 8 \
-    --n_replicate 1 \
+    --device_batch_size 128 \
+    --n_replicate 8 \
     --num_latent_tokens 16 \
     --dim_latent 32 \
     --eq_steps 10 \
