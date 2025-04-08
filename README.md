@@ -1,5 +1,5 @@
 # MolSculptor: a training-free framework for multi-site inhibitor design
-This is the github repo for the paper *Multi-site inhibitor design using a diffusion-evolution framework*, which is preprinted at [arXiv]().
+This is the github repo for the paper *MolSculptor: a diffusion-evolution framework for multi-site inhibitor design*, which is preprinted at [ChemRxiv]().
 
 ## Installation
 Running example scripts in [cases](./cases) requires:
