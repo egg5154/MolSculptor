@@ -17,7 +17,7 @@ conda activate molsculptor_env
 pip install -r requirements.txt
 conda install openbabel=3.1.1 -c conda-forge
 ```
-Ourconfiguration includes Ubuntu 22.04 (GNU/Linux x86_64), NVIDIA A100-SXM4-80GB, CUDA 12.2 and Anaconda 23.7.2.
+Our configuration includes Ubuntu 22.04 (GNU/Linux x86_64), NVIDIA A100-SXM4-80GB, CUDA 12.2 and Anaconda 23.7.2.
 
 After setting up the Python environment, we also need to install [DSDP](https://github.com/PKUGaoGroup/DSDP), a GPU-accelerated tool for molecular docking:
 ```
