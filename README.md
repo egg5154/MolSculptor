@@ -36,7 +36,7 @@ wget -P checkpoints/diffusion-transformer https://zenodo.org/records/15123602/fi
 wget -P checkpoints/diffusion-transformer https://zenodo.org/records/15123602/files/dit_params_opt.pkl
 ```
 ## Molsculptor's current capabilities
-The test cases in out paper is saved in [cases](./cases), including three dual-target inhibitor design tasks and one PI3K selective inhibitor design task.
+The test cases in our paper are saved in [cases](./cases), including three dual-target inhibitor design tasks and one PI3K selective inhibitor design task.
 ### Dual-target inhibitor design
 We tested the molecular optimization capability for MolSculptor in three dual-target inhibitor design tasks:
 * c-Jun N-terminal kinase 3 and Glycogen synthase kinase-3 beta (JNK3/GSK3beta)
