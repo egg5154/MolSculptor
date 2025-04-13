@@ -106,6 +106,12 @@ The main script contains the following required arguments:
 * `--sub_smiles`: the SMILES string for the substructure you want to retain during optimization
 
 ## Citation
-
+```
+@article{li2025molsculptor,
+  title={MolSculptor: a diffusion-evolution framework for multi-site inhibitor design},
+  author={Li, Yanheng and Lin, Xiaohan and Hao, Yize and Zhang, Jun and Gao, Yi Qin},
+  year={2025}
+}
+```
 ## Contact
 For questions or further information, please contact [gaoyq@pku.edu.cn](gaoyq@pku.edu.cn) or [jzhang@cpl.ac.cn](jzhang@cpl.ac.cn).
