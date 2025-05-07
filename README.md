@@ -35,6 +35,7 @@ wget -P checkpoints/auto-encoder https://zenodo.org/records/15123602/files/ae_pa
 wget -P checkpoints/diffusion-transformer https://zenodo.org/records/15123602/files/dit_params_denovo.pkl
 wget -P checkpoints/diffusion-transformer https://zenodo.org/records/15123602/files/dit_params_opt.pkl
 ```
+The install time depends on your Internet speed, approximately ranging from 0.5 to 1 hour.
 ## Molsculptor's current capabilities
 The test cases in our paper are saved in [cases](./cases), including three dual-target inhibitor design tasks and one PI3K selective inhibitor design task.
 ### Dual-target inhibitor design
@@ -55,6 +56,7 @@ bash cases/case_seh-faah/opt_seh-faah.sh
 ```
 bash cases/case_pi3k/denovo_pi3k.sh
 ```
+The runtime is approximately 8 hours for optimization cases and 16 hours for PI3K de novo design case. 
 ### How to build your own case
 #### Dual inhibitor optimization
 For dual-inhibitor optimization task, you will need:
