@@ -1,7 +1,11 @@
 **/__pycache__
 **/__history__
 **/init-molecule
+.vscode
+training_data
+training_results
 dsdp/DSDP
 dsdp/DSDP_main
 cases/**/test
 **params**
+train_**.pkl
