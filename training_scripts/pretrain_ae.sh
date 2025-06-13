@@ -15,6 +15,6 @@ python -u $SCRIPT_DIR/../main_pretrain_ae.py \
     --callback_steps 20 \
     --pre_load_steps 20 \
     --save_steps 5000 \
-    --device_batch_size 64 \
+    --device_batch_size 1 \
     --config_path $SCRIPT_DIR/../checkpoints/auto-encoder/config.pkl
 exit

@@ -149,22 +149,22 @@ class L2SeqGenWithLoss(nn.Module):
         recon_loss = jnp.sum(log_p_unmasked, -1) / (k * (n_seq - n_prefix)) # (B,)
         recon_loss = jnp.mean(recon_loss) * (-1) # (,)
 
-        #### 11-16 update: alignment/uniformity loss with simCLR
-        latent_feat = aux['sim_feat'] ## (B, F)
-        latent_feat = jnp.float32(latent_feat)
-        latent_feat_x, latent_feat_y = jnp.split(latent_feat, 2, axis = 0) # (B, F) -> (B/2, F)
-        ## gather from processes
-        ## WARNING: in this code all processes should have the same sample distribution: b/2 for cluster center and b/2 for neighbor
-        ## NO MASK HERE
-        if self.pmap_flag:
-            latent_feat_x = jax.lax.all_gather(latent_feat_x, axis_name = 'i', tiled = True) # (B/2*N, F), N = n_global_devices
-            latent_feat_y = jax.lax.all_gather(latent_feat_y, axis_name = 'i', tiled = True)
-        # breakpoint() ## check shape here
-        cts_config = self.train_config.contrastive
-        align_loss = align_loss_function_sr(latent_feat_x, latent_feat_y, alpha = cts_config.alpha) # (,) sr for simCLR
-        uni_loss = 0.5 * (
-            uni_loss_function_sr(latent_feat_x, t = cts_config.t) + uni_loss_function_sr(latent_feat_y, t = cts_config.t)
-        ) # (,)
+        # #### 11-16 update: alignment/uniformity loss with simCLR
+        # latent_feat = aux['sim_feat'] ## (B, F)
+        # latent_feat = jnp.float32(latent_feat)
+        # latent_feat_x, latent_feat_y = jnp.split(latent_feat, 2, axis = 0) # (B, F) -> (B/2, F)
+        # ## gather from processes
+        # ## WARNING: in this code all processes should have the same sample distribution: b/2 for cluster center and b/2 for neighbor
+        # ## NO MASK HERE
+        # if self.pmap_flag:
+        #     latent_feat_x = jax.lax.all_gather(latent_feat_x, axis_name = 'i', tiled = True) # (B/2*N, F), N = n_global_devices
+        #     latent_feat_y = jax.lax.all_gather(latent_feat_y, axis_name = 'i', tiled = True)
+        # # breakpoint() ## check shape here
+        # cts_config = self.train_config.contrastive
+        # align_loss = align_loss_function_sr(latent_feat_x, latent_feat_y, alpha = cts_config.alpha) # (,) sr for simCLR
+        # uni_loss = 0.5 * (
+        #     uni_loss_function_sr(latent_feat_x, t = cts_config.t) + uni_loss_function_sr(latent_feat_y, t = cts_config.t)
+        # ) # (,)
 
         loss = recon_loss * self.loss_weights['reconstruct'] ## only reconstruction loss
         loss_dict = {
