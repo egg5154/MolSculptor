@@ -107,6 +107,31 @@ The main script contains the following required arguments:
 * `--init_molecule_path`: the path for initial molecule input file
 * `--sub_smiles`: the SMILES string for the substructure you want to retain during optimization
 
+## Training
+The training scripts are located in [training_scripts](./training_scripts) and the example training data (pre-processed) is in [zenodo](https://zenodo.org/records/15653724/files/training_data.tar.gz?download=1).
+
+Before you begin, download and unpack the pre-processed example dataset into the root of the MolSculptor repository:
+
+```bash
+wget https://zenodo.org/records/15653724/files/training_data.tar.gz?download=1
+tar -xvf training_data.tar.gz
+```
+To launch the AE pre-training script using MPI-style arguments:
+```
+bash training_scripts/pretrain_ae.sh [YOUR IP ADDRESS OF PROCESS 0] [NUM PROCESSES] [RANK]
+## for example, if the model is trained on a single host, with ip 128.5.1.1
+bash training_scripts/pretrain_ae.sh 128.5.1.1 1 0
+## if the model is trained on multi-hosts (2 hosts for example)
+# on host A
+bash training_scripts/pretrain_ae.sh 128.5.1.1 2 0
+# on host B
+bash training_scripts/pretrain_ae.sh 128.5.1.1 2 1
+```
+To train the diffusion-transformer model:
+```
+bash training_scripts/train_dit.sh [YOUR IP ADDRESS OF PROCESS 0] [NUM PROCESSES] [RANK]
+```
+
 ## Citation
 ```
 @article{li2025molsculptor,
