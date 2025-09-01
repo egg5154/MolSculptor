@@ -1,0 +1,3 @@
+/lustre/grp/gyqlab/liyh/stable_moledit/MolSculptor_batched_v2/cases/case_pi3k/pocket_features/alpha-7k6m.pdb /lustre/grp/gyqlab/liyh/stable_moledit/MolSculptor_batched_v2/cases/case_pi3k/pocket_features/PF-06843195.pdbqt
+/lustre/grp/gyqlab/liyh/stable_moledit/MolSculptor_batched_v2/cases/case_pi3k/pocket_features/beta-2y3a.pdb /lustre/grp/gyqlab/liyh/stable_moledit/MolSculptor_batched_v2/cases/case_pi3k/pocket_features/PF-06843195.pdbqt
+/lustre/grp/gyqlab/liyh/stable_moledit/MolSculptor_batched_v2/cases/case_pi3k/pocket_features/delta-7lq1.pdb /lustre/grp/gyqlab/liyh/stable_moledit/MolSculptor_batched_v2/cases/case_pi3k/pocket_features/PF-06843195.pdbqt

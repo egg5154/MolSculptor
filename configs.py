@@ -22,9 +22,27 @@ train_config = {
 }
 
 ###### set hyperparameters here ######
-hidden_size = 256
+hidden_size = 512
 n_head = hidden_size // 32
-n_iters = 6
+n_iters = 12
+num_basis = 256
+
+qed_min, qed_max = (0.25, 0.95)
+sa_min, sa_max = (2.0, 4.5)
+logp_min, logp_max = (-2.0, 6.0)
+mw_min, mw_max = (200.0, 500.0)
+
+label_embedding_config = {
+    'num_basis': num_basis,
+    'hidden_size': hidden_size,
+    'label_drop_flag': True,
+    'label_drop_rate': 0.1,
+    'clip_distance': False,
+    'qed_min': qed_min, 'qed_max': qed_max, 'qed_sigma': (qed_max - qed_min) / num_basis,
+    'sa_min': sa_min, 'sa_max': sa_max, 'sa_sigma': (sa_max - sa_min) / num_basis,
+    'logp_min': logp_min, 'logp_max': logp_max, 'logp_sigma': (logp_max - logp_min) / num_basis,
+    'mw_min': mw_min, 'mw_max': mw_max, 'mw_sigma': (mw_max - mw_min) / num_basis,
+}
 
 time_embedding_config = {
     'hidden_size': hidden_size, 
@@ -80,9 +98,10 @@ adaLN_config = {
 
 dit_config = {
     'n_iterations': n_iters,
-    'emb_label_flag': False,
+    'emb_label_flag': True,
     'hidden_size': hidden_size,
     'time_embedding': time_embedding_config,
+    'label_embedding': label_embedding_config,
     'dit_block': 
         {
             'attention': attention_config,
@@ -98,6 +117,7 @@ dit_config = {
 data_config = {
     'n_query_tokens': 16,
     'latent_dim': 32,
+    'force_drop_rate': 1/4,
 }
 
 dit_config = ConfigDict(dit_config)

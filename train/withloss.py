@@ -105,7 +105,7 @@ class L2SeqGenWithLoss(nn.Module):
 
     def setup(self):
 
-        self._dtype = jnp.float16 if self.global_config.bf16_flag else jnp.float32
+        self._dtype = jnp.bfloat16 if self.global_config.bf16_flag else jnp.float32
 
         settings_config = self.train_config.settings
         self.vocab_size = settings_config.vocab_size ## vocab size include BOS/EOS/UNK/SEP...
@@ -181,7 +181,7 @@ class DecoderWithLoss(nn.Module):
 
     def setup(self):
 
-        self._dtype = jnp.float16 if self.global_config.bf16_flag else jnp.float32
+        self._dtype = jnp.bfloat16 if self.global_config.bf16_flag else jnp.float32
 
         settings_config = self.train_config.settings
         self.vocab_size = settings_config.vocab_size ## vocab size include BOS/EOS/UNK/SEP...
@@ -232,7 +232,7 @@ class MMDSeqGenWithLoss(nn.Module):
 
     def setup(self):
 
-        self._dtype = jnp.float16 if self.global_config.bf16_flag else jnp.float32
+        self._dtype = jnp.bfloat16 if self.global_config.bf16_flag else jnp.float32
 
         settings_config = self.train_config.settings
         self.vocab_size = settings_config.vocab_size ## vocab size include BOS/EOS/UNK/SEP...
@@ -336,6 +336,8 @@ class DiTWithLoss(nn.Module):
         )
         eps_pred = self.net(
             x_t, jnp.ones((bs, npt), dtype = arr_dtype), random_t,
+            labels = input_dict['labels'],
+            force_drop_ids = input_dict['force_drop_ids'],
             tokens_rope_index = jnp.arange(npt, dtype = jnp.int32)[None, :].repeat(bs, axis = 0),
         )
         eps_pred = jnp.float32(eps_pred)

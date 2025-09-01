@@ -51,7 +51,7 @@ class TimestepEmbedder(nn.Module):
         embedding = jnp.concatenate([jnp.cos(args), jnp.sin(args)], axis=-1) ### TODO: pi here?
         return embedding
 
-class LabelEmbedder(nn.Module):
+class DiscreteLabelEmbedder(nn.Module):
     """
     Embeds class labels into vector representations. Also handles label dropout for classifier-free guidance.
     """
@@ -88,6 +88,71 @@ class LabelEmbedder(nn.Module):
         if use_dropout:
             labels = self.token_drop(labels, force_drop_ids)
         embeddings = embedding_table(labels)
+
+        return embeddings
+
+
+class ContinuousLabelEmbedder(nn.Module):
+    """
+    Embeds continuous conditions into vector representations.
+    """
+
+    config: ConfigDict
+    global_config: ConfigDict
+
+    def gaussian_rbf(self, x, x_min, x_max, sigma):
+        coeff = -0.5 * jnp.reciprocal(jnp.square(sigma))
+        offsets = jnp.linspace(x_min, x_max, self.config.num_basis)
+        if self.config.clip_distance:
+            x = jnp.clip(x, x_min, x_max)
+        x = jnp.expand_dims(x, axis=-1)  # (..., ) -> (..., 1)
+        diff = x - offsets  # (..., 1) - (..., num_basis) -> (..., num_basis)
+        rbf = jnp.exp(coeff * jnp.square(diff))  # (..., num_basis)
+        return rbf
+
+    def token_drop(self, labels, force_drop_ids = None):
+        """
+        Drops labels to enable classifier-free guidance.
+        force_drop_ids: (B,)
+        """
+        batch_size = labels.shape[0]
+        if self.global_config.dropout_flag: # TODO: add a special dropout_flag
+            rng = self.make_rng('label_dropout')
+            random_drop_ids = jax.random.bernoulli(rng, self.config.label_drop_rate, (batch_size,)).astype(jnp.int16)
+        else:
+            random_drop_ids = jnp.zeros((batch_size,), jnp.int16) # no random drop
+        drop_ids = jnp.logical_or(random_drop_ids, force_drop_ids)
+        labels = jnp.where(drop_ids, -1e5, labels) # set to zero for uncond
+        return labels
+    
+    @nn.compact
+    def __call__(self, labels, force_drop_ids = None):
+        ### labels: qed / sa / logp / mw
+
+        arr_dtype = jnp.bfloat16 if self.global_config.bf16_flag else jnp.float32
+        embedding_table = nn.Dense(
+            features = self.config.hidden_size,
+            kernel_init = normal(0.02),
+            dtype = arr_dtype,
+            param_dtype = jnp.float32,
+            use_bias = False, # zero for no cond
+        )
+
+        use_dropout = self.config.label_drop_flag
+        if use_dropout:
+            labels = jax.tree_util.tree_map(lambda x: self.token_drop(x, force_drop_ids), labels)
+
+        qed_embeddings = self.gaussian_rbf(
+            labels['qed'], self.config.qed_min, self.config.qed_max, self.config.qed_sigma)
+        sa_embeddings = self.gaussian_rbf(
+            labels['sa'], self.config.sa_min, self.config.sa_max, self.config.sa_sigma)
+        logp_embeddings = self.gaussian_rbf(
+            labels['logp'], self.config.logp_min, self.config.logp_max, self.config.logp_sigma)
+        mw_embeddings = self.gaussian_rbf(
+            labels['mw'], self.config.mw_min, self.config.mw_max, self.config.logp_sigma)
+        embeddings = jnp.concatenate(
+            [qed_embeddings, sa_embeddings, logp_embeddings, mw_embeddings], axis=-1)  # (B, nbf * 4)
+        embeddings = embedding_table(embeddings)
 
         return embeddings
 
@@ -181,15 +246,15 @@ class DiffusionTransformerOutput(nn.Module):
 
         return act
 
-TimeEmbedding = TimestepEmbedder ### TODO: time embedding need to be checked
-LabelEmbedding = LabelEmbedder
+TimeEmbedding = TimestepEmbedder
+LabelEmbedding = ContinuousLabelEmbedder
 class DiffusionTransformer(nn.Module):
 
     config: ConfigDict
     global_config: ConfigDict
 
     @nn.compact
-    def __call__(self, tokens, tokens_mask, time, label = None, 
+    def __call__(self, tokens, tokens_mask, time, labels = None, 
                  force_drop_ids = None, tokens_rope_index = None):
         """
         Inputs:
@@ -206,7 +271,9 @@ class DiffusionTransformer(nn.Module):
         batch_size, n_tokens, channel_size = tokens.shape
         time_emb = TimeEmbedding(self.config.time_embedding, self.global_config)(time) # (B, F)
         if self.config.emb_label_flag:
-            label_emb = LabelEmbedding(self.config.label_embedding, self.global_config)(label, force_drop_ids) # (B, F)
+            assert (labels is not None) and (force_drop_ids is not None), \
+                'labels and force_drop_ids must be provided when emb_label_flag is True.'
+            label_emb = LabelEmbedding(self.config.label_embedding, self.global_config)(labels, force_drop_ids) # (B, F)
         else:
             label_emb = 0.
         condition_emb = time_emb + label_emb
@@ -225,6 +292,5 @@ class DiffusionTransformer(nn.Module):
                                             output_size=raw_emb_dim,
                                             global_config=self.global_config) \
             (tokens, condition_emb) ## (B, T, C)
-
-        ### TODO: some other reshape / transformation maybe needed here
+        
         return tokens

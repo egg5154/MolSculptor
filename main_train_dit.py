@@ -75,6 +75,11 @@ from train.utils import split_multiple_rng_keys, psum_tree, pmean_tree, \
     print_net_params, print_net_params_count
 from train.dataloader import TrainDataLoader
 
+from configs import global_config as default_global_config
+from configs import train_config as default_train_config
+from configs import data_config as default_data_config
+from configs import dit_config as default_net_config
+
 def load_ckpt(path):
     with open(path, 'rb') as f:
         params = pkl.load(f)
@@ -96,6 +101,12 @@ def weight_decay_kernel_mask(param_dict: dict[jax.Array]):
 
 def train():
 
+    #### create save path
+    if (RANK == 0):
+        os.makedirs(args.save_ckpt_path, exist_ok=True)
+        os.makedirs(os.path.join(args.save_ckpt_path, "params"), exist_ok=True)
+        os.makedirs(os.path.join(args.save_ckpt_path, "opt_states"), exist_ok=True)
+
     #### set recoder
     recoder = logging.getLogger("training stable moledit latent diffusion.")
     recoder.setLevel(level=logging.DEBUG)
@@ -112,13 +123,19 @@ def train():
     with open(args.name_list_path, 'rb') as f:
         name_list = pkl.load(f)
     #### load config
-    with open(args.config_path, 'rb') as f:
-        config_dicts = pkl.load(f)
-    global_config = ConfigDict(config_dicts['global_config'])
-    net_config = ConfigDict(config_dicts['net_config'])
-    train_config = ConfigDict(config_dicts['train_config'])
-    data_config = ConfigDict(config_dicts['data_config'])
-
+    if args.config_path:
+        with open(args.config_path, 'rb') as f:
+            config_dicts = pkl.load(f)
+        global_config = ConfigDict(config_dicts['global_config'])
+        net_config = ConfigDict(config_dicts['net_config'])
+        train_config = ConfigDict(config_dicts['train_config'])
+        data_config = ConfigDict(config_dicts['data_config'])
+    else:
+        global_config = default_global_config
+        net_config = default_net_config
+        train_config = default_train_config
+        data_config = default_data_config
+        
     #### set constants
     DEVICE_BATCH_SIZE = args.device_batch_size # batch size per device
     N_GLOBAL_DEVICES = jax.device_count()
@@ -181,6 +198,7 @@ def train():
         init_keys = {
             'normal_key': noise_key, 'time_key': state_key, 
             'params': param_key, 'dropout': dropout_key,
+            'label_dropout': dropout_key,
         }
         params = init_net.init(init_keys, init_data)
         params = tree_map(np.asarray, params) ## release memory
@@ -228,7 +246,8 @@ def train():
         dropout_key, rng_key = jax.random.split(rng_key)
         time_key, rng_key = jax.random.split(rng_key)
         normal_key, rng_key = jax.random.split(rng_key)
-        input_rng_key = {'dropout': dropout_key, 'time_key': time_key, 'normal_key': normal_key}
+        label_dropout_key, rng_key = jax.random.split(rng_key)
+        input_rng_key = {'dropout': dropout_key, 'time_key': time_key, 'normal_key': normal_key, 'label_dropout': label_dropout_key}
         loss_dict, grad_dict = forward_and_backward(
             net_params, batch_data, step_it, input_rng_key)
         loss, loss_dict = loss_dict
@@ -263,7 +282,10 @@ def train():
         
         ## load data
         dataloader.check(step_it = step)
+        # t0 = datetime.datetime.now()
         data_dict = dataloader.load_data(step_it = step)
+        # t1 = datetime.datetime.now()
+        # print(t1 - t0)
 
         ## training
         loss_dict, train_state = train_one_step_pmap(data_dict, train_state)

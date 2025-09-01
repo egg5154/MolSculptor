@@ -1,0 +1,2 @@
+/lustre/grp/gyqlab/liyh/stable_moledit/MolSculptor_v2/cases/case_ar-gr/pocket_features/ar-1z95.pdb /lustre/grp/gyqlab/liyh/stable_moledit/MolSculptor_v2/cases/case_ar-gr/pocket_features/ga32_1z95.pdbqt
+/lustre/grp/gyqlab/liyh/stable_moledit/MolSculptor_v2/cases/case_ar-gr/pocket_features/gr-4mdd.pdb /lustre/grp/gyqlab/liyh/stable_moledit/MolSculptor_v2/cases/case_ar-gr/pocket_features/ga32_4mdd.pdbqt

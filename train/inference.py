@@ -129,7 +129,7 @@ class InferEncoder(nn.Module):
     @nn.compact
     def __call__(self, atom_features, bond_features,):
 
-        arr_dtype = jnp.float16 if self.global_config.bf16_flag else jnp.float32
+        arr_dtype = jnp.bfloat16 if self.global_config.bf16_flag else jnp.float32
         graph_feat = Encoder(
             self.config.encoder, self.global_config,
         )(atom_features, bond_features)
@@ -406,6 +406,7 @@ class Inferencer:
 #             return canonical_smi
 #     else:
 #         return None
+
 def standardize(smiles, dropout_threshold = 0.7):
     uncharger = rdMolStandardize.Uncharger() 
     try:
@@ -417,14 +418,44 @@ def standardize(smiles, dropout_threshold = 0.7):
     except:
         return None
 
+def sanitize_smiles(smiles):
+    valid_element_set = set([1, 5, 6, 7, 8, 9, 14, 15, 16, 17, 32, 33, 34, 35, 51, 52, 53])
+    uncharger = rdMolStandardize.Uncharger() 
+    
+    try:
+        with BlockLogs():
+            mol = Chem.MolFromSmiles(smiles, sanitize = True) 
+            # mol = rdMolStandardize.Cleanup(mol)
+            # mol = rdMolStandardize.FragmentParent(mol)
+            mol = uncharger.uncharge(mol)
+            # mol = rdMolStandardize.TautomerEnumerator().Canonicalize(mol)
+            element_set = [atom.GetAtomicNum() for atom in mol.GetAtoms()]
+            ## assert options: 3 < heavy atoms <= 64,
+            # print(mol.GetNumHeavyAtoms())
+            # print(set(element_set).issubset(valid_element_set))
+            assert 3 < mol.GetNumHeavyAtoms() <= 64
+            assert set(element_set).issubset(valid_element_set)
+            stan_smiles = Chem.MolToSmiles(mol, isomericSmiles = True, canonical = True)
+            _m = Chem.MolFromSmiles(stan_smiles, sanitize = True)
+            assert _m is not None
+            return stan_smiles
+    except Exception as e:
+        return None
+
 ENCODING_DTYPE = np.int16
 def encoding_graphs(smi):
 
-    mol_to_process = Chem.MolFromSmiles(smi, sanitize = False)
+    # debug
+    try:
+        mol_to_process = Chem.MolFromSmiles(smi, sanitize = True)
+        atom_type = [atom.GetAtomicNum() for atom in mol_to_process.GetAtoms()]
+    except:
+        breakpoint()
+    mol_to_process = Chem.MolFromSmiles(smi, sanitize = True)
 
-    Chem.SanitizeMol(mol_to_process, Chem.SANITIZE_ALL ^ Chem.SANITIZE_PROPERTIES)
-    mol_to_process.UpdatePropertyCache(strict=False)
-    Chem.AssignStereochemistry(mol_to_process, cleanIt=True, force=True)
+    # Chem.SanitizeMol(mol_to_process, Chem.SANITIZE_ALL ^ Chem.SANITIZE_PROPERTIES)
+    # mol_to_process.UpdatePropertyCache(strict=False)
+    # Chem.AssignStereochemistry(mol_to_process, cleanIt=True, force=True)
 
     #### get atom features:
     #### atom type, formal charge, degree, #H, aromaticity and hybridization, chiral

@@ -49,6 +49,13 @@ class TrainDataLoader:
         self.lbs = self.device_batch_size * jax.local_device_count()
         self.data = np.empty(
             (0, data_config['n_query_tokens'], data_config['latent_dim']), dtype = np.float32)
+        self.smiles = np.empty((0,), dtype = object)
+        self.labels = {
+            'qed': np.empty((0,), np.float32),
+            'sa': np.empty((0,), np.float32),
+            'logp': np.empty((0,), np.float32),
+            'mw': np.empty((0,), np.float32),
+        }
         self.start_idx = 0
         self.end_idx = 0
 
@@ -63,9 +70,19 @@ class TrainDataLoader:
         self.data_it += 1
         #### update data
         with open(this_data_path, 'rb') as f:
-            data_to_update = pkl.load(f)['latent']
+            x_ = pkl.load(f)
+            data_to_update = x_['latent']
+            smiles_to_update = x_['smiles']
+            labels_to_update = {k: x_[k] for k in self.labels.keys()}
         self.data = np.concatenate(
-            [self.data[idx_it - self.start_idx:], data_to_update], axis = 0) ### (N, T, D)
+            [self.data[idx_it - self.start_idx:], data_to_update], axis = 0) # (N, T, D)
+        self.smiles = np.concatenate(
+            [self.smiles[idx_it - self.start_idx:], smiles_to_update], axis = 0) # (N,)
+        self.labels = {
+            k: np.concatenate(
+                [self.labels[k][idx_it - self.start_idx:], labels_to_update[k]], axis = 0,
+                ) for k in self.labels.keys()
+        }
         self.start_idx = idx_it
         self.end_idx = idx_it + self.data.shape[0]
         self.recoder.info(f"\tStart index now: {self.start_idx},")
@@ -95,20 +112,71 @@ class TrainDataLoader:
 
         _idx = _get_idxs()
         # breakpoint() ## check here
-        return self.data[_idx]
+        return self.data[_idx], self.smiles[_idx], tree_map(lambda x: x[_idx], self.labels)
     
     def load_data(self, step_it,):
 
-        batch_data = self.organize(step_it)
+        batch_data, batch_smiles, batch_labels = self.organize(step_it)
         batch_data = np.reshape(
             batch_data, (self.num_local_devices, self.device_batch_size,) + batch_data.shape[1:])
-        # breakpoint()
         batch_data *= np.sqrt(self.data_config['latent_dim'])
-        return {'feat': batch_data}
+
+        ### deprecated: just-in-time calculation
+        # def _calculate_all_properties(smi):
+        #     mol = Chem.MolFromSmiles(smi)
+        #     if mol is None:
+        #         return (np.nan, np.nan, np.nan, np.nan)
+            
+        #     try:
+        #         qed = QED.qed(mol)
+        #         sa = sascorer.calculateScore(mol)
+        #         logp = Crippen.MolLogP(mol)
+        #         mw = Descriptors.MolWt(mol)
+        #         return (qed, sa, logp, mw)
+        #     except Exception:
+        #         return (np.nan, np.nan, np.nan, np.nan)
+        # batch_smiles = np.reshape(
+        #     batch_smiles, (self.num_local_devices, self.device_batch_size,)
+        # )
+        # batch_mols = [Chem.MolFromSmiles(s) for s in batch_smiles]
+        # batch_labels = {
+        #     # 'qed': np.array([QED.qed(mol) for mol in batch_mols], dtype = np.float32),
+        #     # 'sa': np.array([sascorer.calculateScore(mol) for mol in batch_mols], dtype = np.float32),
+        #     'qed': np.array(Parallel(n_jobs=-1)(delayed(QED.qed)(mol) for mol in batch_mols), dtype = np.float32),
+        #     'sa': np.array(Parallel(n_jobs=-1)(delayed(sascorer.calculateScore)(mol) for mol in batch_mols), dtype = np.float32),
+        #     'logp': np.array([Crippen.MolLogP(mol) for mol in batch_mols], dtype = np.float32),
+        #     'mw': np.array([Descriptors.MolWt(mol) for mol in batch_mols], dtype = np.float32),
+        # }
+        # all_properties_list = Parallel(n_jobs=-1)(
+        #     delayed(_calculate_all_properties)(smi) for smi in batch_smiles
+        # )
+        # qed_list, sa_list, logp_list, mw_list = zip(*all_properties_list)
+        # batch_labels = {
+        #     'qed': np.array(qed_list, dtype=np.float32),
+        #     'sa': np.array(sa_list, dtype=np.float32),
+        #     'logp': np.array(logp_list, dtype=np.float32),
+        #     'mw': np.array(mw_list, dtype=np.float32),
+        # }
+
+        ### load from data
+        batch_labels = tree_map(
+            lambda x: np.reshape(x, (self.num_local_devices, self.device_batch_size,)),
+            batch_labels,
+        )
+        force_drop_ids = np.random.binomial(1, self.data_config.force_drop_rate, batch_smiles.shape).astype(np.int16)
+        force_drop_ids = np.reshape(
+            force_drop_ids, (self.num_local_devices, self.device_batch_size,)
+        )
+
+        return {'feat': batch_data, 'labels': batch_labels, 'force_drop_ids': force_drop_ids}
     
     def load_init_data(self,):
 
-        return {'feat': self.data[:1]}
+        return {
+            'feat': self.data[:1], 
+            'labels': tree_map(lambda x: x[:1], self.labels), 
+            'force_drop_ids': np.zeros((1,), dtype=np.int16)
+            }
 
 ### for ae training
 DTYPE = np.int16

@@ -177,9 +177,16 @@ class PreNormTransformerBlock(nn.Module):
         ## if we use cross attention, then hyper attention embedding is not recommended
         if self.hyper_attention_flag:
             q_i, k_i = self.hyper_attention_embedding(q_i, k_i, m_j, z_ij, m_ij, n_i_or_r_i)
+            b_ij = None
+        else:
+            if (z_ij is not None):
+                b_ij = self.proj_z(z_ij).squeeze(-1) # (B, Q, Qn, H)
+                b_ij = jnp.transpose(b_ij, (0, 3, 1, 2))
+            else:
+                b_ij = None
 
         ## attention kernel
-        act = self.attention_kernel(q_i, k_i, v_i, None, m_i)
+        act = self.attention_kernel(q_i, k_i, v_i, b_ij, m_i)
         act = self.post_attention(act, q_i, **hyper_var_)
 
         act = self.dropout_attention(act)
@@ -225,6 +232,8 @@ class PostNormTransformerBlock(nn.Module):
         if self.hyper_attention_flag:
             hyper_attention_config = self.config.hyper_attention_embedding
             self.hyper_attention_embedding = HyperAttentionEmbedding(hyper_attention_config, self.global_config)
+        else:
+            self.proj_z = nn.Dense(features = 1, dtype = self.arr_dtype)
 
         ### attention operation
         kernel_config = self.config.attention_kernel
