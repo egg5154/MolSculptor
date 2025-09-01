@@ -1,6 +1,8 @@
 # MolSculptor
 This is the github repo for the paper *MolSculptor: an adaptive diffusion-evolution framework enabling generative drug design for multi-target affinity and selectivity*, which is preprinted at [ChemRxiv](https://doi.org/10.26434/chemrxiv-2025-v4758).
 
+<p align="center"><img src="figures/fig-1.png" width="100%"></p>
+
 ## Installation
 Running example scripts in [cases](./cases) requires:
 * python==3.12
@@ -195,4 +197,5 @@ bash training_scripts/train_dit.sh [YOUR IP ADDRESS OF PROCESS 0] [NUM PROCESSES
 ```
 ## Contact
 For questions or further information, please contact [gaoyq@pku.edu.cn](gaoyq@pku.edu.cn) or [jzhang@cpl.ac.cn](jzhang@cpl.ac.cn).
+
 
