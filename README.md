@@ -19,7 +19,7 @@ pip install -r requirements.txt
 ```
 Our configuration includes Ubuntu 22.04 (GNU/Linux x86_64), NVIDIA A100-SXM4-80GB, CUDA 12.2 and Anaconda 24.9.1.
 
-After setting up the Python environment, we also need to install [DSDP](https://github.com/PKUGaoGroup/DSDP), a GPU-accelerated tool for molecular docking:
+Next, you need to install [DSDP](https://github.com/PKUGaoGroup/DSDP), a GPU-accelerated tool for molecular docking:
 ```
 cd dsdp
 git clone https://github.com/PKUGaoGroup/DSDP.git DSDP_main
@@ -28,9 +28,9 @@ make
 cp DSDP ../../
 cd ../../../
 ```
-Successfully compiling DSDP requires that CUDA has been installed on your server and has been properly added to the environment variables. 
+Successful compilation requires a working CUDA installation with correctly configured environment variables.
 
-Finally we need to get the model parameters for auto-encoder model and diffusion transformer model:
+Finally, download the pre-trained model parameters:
 ```
 mkdir checkpoints
 wget -O checkpoints/auto_encoder/params.pkl https://zenodo.org/records/17016634/files/auto_encoder_config.pkl
@@ -42,9 +42,9 @@ wget -O checkpoints/affinity_predictor/params.pkl https://zenodo.org/records/170
 
 ```
 
-The downloading time depends on your Internet speed, approximately ranging from 0.5 to 1 hour.
+The download may take 30-60 minutes depending on your connection speed.
 ## Molsculptor's current capabilities
-The test cases in our paper are saved in [cases](./cases), including three dual-target inhibitor design tasks and one PI3K selective inhibitor design task.
+The test cases in our paper are saved in [cases](./cases):
 ### Dual-target inhibitor lead optimization
 We tested the molecular optimization capability for MolSculptor in three dual-target inhibitor design tasks:
 * c-Jun N-terminal kinase 3 and Glycogen synthase kinase-3 beta (JNK3/GSK3beta)
@@ -71,17 +71,17 @@ The runtime is approximately 12 hours for optimization cases and 24 hours for PI
 ### How to build your own case
 #### Lead optimization
 For lead optimization tasks, you will need:
-* `.pdbqt`files for target proteins
-* DSDP docking scripts
-* initial molecules (its SMILES, molecular graphs and docking scores)
-* [optional] pocket features
+* `.pdbqt` files for target proteins.
+* DSDP docking scripts for each target.
+* An initial molecule file (containing its SMILES, graph, and docking scores).
+* (Optional) Pre-computed pocket features for the surrogate model.
 ##### Creating `.pdbqt` file for target proteins
 You can use [openbabel](https://github.com/openbabel/openbabel) to create the protein `.pdbqt` file from a sanitized `.pdb` file:
 ```
 obabel -ipdb xxx.pdb -opdbqt xxx.pdbqt -h # or -p 7.4
 ```
 ##### Creating DSDP docking scripts
-The general script format is as follows (assume this script is in `cases/your_own_cases` folder):
+The script should follow this general format (assume this script is in `cases/your_own_cases` folder):
 ```
 #!/bin/bash
 
@@ -101,12 +101,12 @@ Where the `--protein` argument is for the target `.pdbqt` file, the `--box_min` 
 For example in AR/GR case, you can use [make_init_molecule.ipynb](cases/case_ar-gr/make_init_molecule.ipynb) to create `init_search_molecule.pkl`. The `.pkl` file will be saved in `${YOUR_NOTEBOOK_PATH}/init_molecule`.
 
 ##### Choosing a suitable noise schedule
-You can use [noising-denoising_test.py](tools/noising-denoising_test.py) and [noising-denoising_analysis.ipynb](cases/case_ar-gr/noising-denoising_analysis.ipynb) to exmaine the relationship between diffusion timestep and molecular similarity, validity and other optimization/generation related metrics.
+Use the provided scripts [noising-denoising_test.py](tools/noising-denoising_test.py) and [noising-denoising_analysis.ipynb](cases/case_ar-gr/noising-denoising_analysis.ipynb) to analyze the relationship between the diffusion timestep and key generation metrics for your starting molecule.
 ```
 bash tools/noising-denoising_test.sh <path of init_search_molecule.pkl>
 ```
 ##### Create pocket features (optional)
-Pocket features can be used as additional information in our docking surrogate model.
+Providing pocket features can improve the accuracy of the docking surrogate model. This step requires a separate environment for ESM-2.
 
 To create pocket features, you need to create a new environment for [ESM-2](https://github.com/facebookresearch/esm) first.
 ```
@@ -128,12 +128,12 @@ python tools/get_pocket_features.py \
 	--esm_env_python_path <python path for fair_esm environment> \
 	--esm_model_path <your path to ESM-2 model checkpoints>
 ```
-The `name_list.txt` (eg. `case_ar-gr/pocket_features/name_list.txt`) has following format:
+You must provide a `name_list.txt` file (eg. `case_ar-gr/pocket_features/name_list.txt`) with the following format, where the ligand file is used to define the pocket center:
 ```
-<path to target-1.pdb> <path to ligand-1.pdb>
-<path to target-2.pdb> <path to ligand-2.pdb>
+/path/to/target-1.pdb /path/to/ligand-1.pdbqt
+/path/to/target-2.pdb /path/to/ligand-2.pdbqt
 ...
-<path to target-n.pdb> <path to ligand-n.pdb>
+/path/to/target-n.pdb /path/to/ligand-n.pdbqt
 ``` 
 Where `target-i.pdb` stands for target `.pdb` file, and `ligand-i.pdb` stands for the ligand docking `.pdbqt` file used to recognize pocket coordinates. We recommend using absolute path in your `name_list.txt`. 
 
@@ -152,7 +152,7 @@ The main script (eg. [opt.sh](cases/case_ar-gr/opt.sh)) contains the following r
 ```
 
 #### *De novo* design
-For *de novo* design, the main script (eg. [denovo.sh](cases/case_pi3k/denovo.sh)) have similar arguments as lead optimization scripts, and differs in following arguments:
+For *de novo* design, the main script (eg. [denovo.sh](cases/case_pi3k/denovo.sh)) has similar arguments to the lead optimization script, with the following key differences:
 ```
 --init_step: step for global exploration
 --opt_step: step for optimization
@@ -195,3 +195,4 @@ bash training_scripts/train_dit.sh [YOUR IP ADDRESS OF PROCESS 0] [NUM PROCESSES
 ```
 ## Contact
 For questions or further information, please contact [gaoyq@pku.edu.cn](gaoyq@pku.edu.cn) or [jzhang@cpl.ac.cn](jzhang@cpl.ac.cn).
+
