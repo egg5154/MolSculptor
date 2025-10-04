@@ -11,7 +11,7 @@ Running example scripts in [cases](./cases) requires:
 * ml-collections==0.1.1
 * rdkit==2023.9.6
 * openbabel-wheel==3.1.1
-* meeko==0.6.1
+* meeko==0.6.0
 
 We also provide [requirements.txt](./requirements.txt) to make sure you can quickly create a compatible environment by the following steps:
 ```
@@ -35,13 +35,15 @@ Successful compilation requires a working CUDA installation with correctly confi
 Finally, download the pre-trained model parameters:
 ```
 mkdir checkpoints
+mkdir checkpoints/auto_encoder
+mkdir checkpoints/diffusion_transformer
+mkdir checkpoints/affinity_predictor
 wget -O checkpoints/auto_encoder/params.pkl https://zenodo.org/records/17016634/files/auto_encoder_config.pkl
 wget -O checkpoints/auto_encoder/config.pkl https://zenodo.org/records/17016634/files/auto_encoder_params.pkl
 wget -O checkpoints/diffusion_transformer/config.pkl https://zenodo.org/records/17016634/files/diffusion_transformer_config.pkl
 wget -O checkpoints/diffusion_transformer/params.pkl https://zenodo.org/records/17016634/files/diffusion_transformer_params.pkl
 wget -O checkpoints/affinity_predictor/config.pkl https://zenodo.org/records/17016634/files/affinity_predictor_config.pkl
 wget -O checkpoints/affinity_predictor/params.pkl https://zenodo.org/records/17016634/files/affinity_predictor_params.pkl
-
 ```
 
 The download may take 30-60 minutes depending on your connection speed.

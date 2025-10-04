@@ -7,7 +7,6 @@ asttokens==2.4.1
 astunparse==1.6.3
 async-lru==2.0.4
 attrs==23.2.0
-AutoDockTools_py3==1.5.7.post1+12.ga62a5d9
 Babel==2.15.0
 beautifulsoup4==4.12.3
 biopython==1.85
@@ -88,7 +87,7 @@ MarkupSafe==2.1.5
 matplotlib==3.9.0
 matplotlib-inline==0.1.7
 mdurl==0.1.2
-meeko==0.6.1
+meeko==0.6.0a0
 mistune==3.0.2
 ml-collections==0.1.1
 ml_dtypes==0.5.3
