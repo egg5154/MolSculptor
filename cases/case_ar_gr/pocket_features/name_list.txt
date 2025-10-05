@@ -1,0 +1,2 @@
+/your/path/to/MolSculptor/cases/case_ar-gr/pocket_features/ar-1z95.pdb /your/path/to/MolSculptor/cases/case_ar-gr/pocket_features/ga32_1z95.pdbqt
+/your/path/to/MolSculptor/cases/case_ar-gr/pocket_features/gr-4mdd.pdb /your/path/to/MolSculptor/cases/case_ar-gr/pocket_features/ga32_4mdd.pdbqt

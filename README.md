@@ -38,12 +38,12 @@ mkdir checkpoints
 mkdir checkpoints/auto_encoder
 mkdir checkpoints/diffusion_transformer
 mkdir checkpoints/affinity_predictor
-wget -O checkpoints/auto_encoder/params.pkl https://zenodo.org/records/17016634/files/auto_encoder_config.pkl
-wget -O checkpoints/auto_encoder/config.pkl https://zenodo.org/records/17016634/files/auto_encoder_params.pkl
+wget -O checkpoints/auto_encoder/config.pkl https://zenodo.org/records/17016634/files/auto_encoder_config.pkl
+wget -O checkpoints/auto_encoder/params.pkl https://zenodo.org/records/17016634/files/auto_encoder_params.pkl
 wget -O checkpoints/diffusion_transformer/config.pkl https://zenodo.org/records/17016634/files/diffusion_transformer_config.pkl
 wget -O checkpoints/diffusion_transformer/params.pkl https://zenodo.org/records/17016634/files/diffusion_transformer_params.pkl
 wget -O checkpoints/affinity_predictor/config.pkl https://zenodo.org/records/17016634/files/affinity_predictor_config.pkl
-wget -O checkpoints/affinity_predictor/params.pkl https://zenodo.org/records/17016634/files/affinity_predictor_params.pkl
+wget -O checkpoints/affinity_predictor/params.pkl https://zenodo.org/records/17269822/files/affinity_predictor_params.pkl
 ```
 
 The download may take 30-60 minutes depending on your connection speed.
@@ -57,20 +57,24 @@ bash cases/case_jnk3_gsk3b/opt.sh <seed> <gpu_id>
 ```
 * Androgen receptor and glucocorticoid receptor (AR/GR)
 ```
-bash cases/case_ar-gr/opt.sh <seed> <gpu_id>
+bash cases/case_ar_gr/opt.sh <seed> <gpu_id>
 ```
 * Soluble epoxide hydrolase and fatty acid amide hydrolase (sEH/FAAH)
 ```
-bash cases/case_seh-faah/opt.sh <seed> <gpu_id>
+bash cases/case_seh_faah/opt.sh <seed> <gpu_id>
 ```
+**Settings for paper results**: NPOP=128, NREP=8, NSTEP=30.
 ### BIKE/MPSK1 selective inhibitor lead optimization
 ```
 bash cases/case_bike_mpsk1/opt.sh <seed> <gpu_id>
 ```
+**Settings for paper results**: NPOP=128, NREP=8, NSTEP=30.
 ### PI3K selective inhibitor *de novo* design
 ```
 bash cases/case_pi3k/denovo.sh <seed> <gpu_id>
 ```
+**Settings for paper results**: NPOP=128, NREP=8, NINIT_STEP=5, NOPT_STEP=45.
+
 The runtime is approximately 12 hours for optimization cases and 24 hours for PI3K de novo design case. 
 ### How to build your own case
 #### Lead optimization

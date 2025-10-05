@@ -1,2 +1,2 @@
-/lustre/grp/gyqlab/liyh/stable_moledit/MolSculptor_batched_v2/cases/case_jnk3_gsk3b/pocket_features/jnk3-3oy1.pdb /lustre/grp/gyqlab/liyh/stable_moledit/MolSculptor_batched_v2/cases/case_jnk3_gsk3b/pocket_features/docking-jnk3.pdbqt
-/lustre/grp/gyqlab/liyh/stable_moledit/MolSculptor_batched_v2/cases/case_jnk3_gsk3b/pocket_features/gsk3b-6y9s.pdb /lustre/grp/gyqlab/liyh/stable_moledit/MolSculptor_batched_v2/cases/case_jnk3_gsk3b/pocket_features/docking-gsk3b.pdbqt
+/your/path/to/MolSculptor/cases/case_jnk3_gsk3b/pocket_features/jnk3-3oy1.pdb /your/path/to/MolSculptor/cases/case_jnk3_gsk3b/pocket_features/docking-jnk3.pdbqt
+/your/path/to/MolSculptor/cases/case_jnk3_gsk3b/pocket_features/gsk3b-6y9s.pdb /your/path/to/MolSculptor/cases/case_jnk3_gsk3b/pocket_features/docking-gsk3b.pdbqt
