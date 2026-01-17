@@ -196,13 +196,14 @@ bash training_scripts/train_dit.sh [YOUR IP ADDRESS OF PROCESS 0] [NUM PROCESSES
 ## Citation
 ```
 @article{li2025molsculptor,
-  title={MolSculptor: a diffusion-evolution framework for multi-site inhibitor design},
-  author={Li, Yanheng and Lin, Xiaohan and Hao, Yize and Zhang, Jun and Gao, Yi Qin},
+  title={MolSculptor: an adaptive diffusion-evolution framework enabling generative drug design for multi-target affinity and selectivity},
+  author={Li, Yanheng and Lin, Xiaohan and Hao, Yize and Zhang, Jun and Wu, Yundong and Gao, Yi Qin},
   year={2025}
 }
 ```
 ## Contact
 For questions or further information, please contact [gaoyq@pku.edu.cn](gaoyq@pku.edu.cn) or [jzhang@cpl.ac.cn](jzhang@cpl.ac.cn).
+
 
 
 
