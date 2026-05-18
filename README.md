@@ -1,5 +1,5 @@
 # MolSculptor
-This is the github repo for the paper *MolSculptor: an adaptive diffusion-evolution framework enabling generative drug design for multi-target affinity and selectivity*, which is preprinted at [ChemRxiv](https://chemrxiv.org/engage/chemrxiv/article-details/68b55b3e728bf9025e919538).
+This is the github repo for the paper *MolSculptor: an adaptive diffusion-evolution framework enabling generative drug design for multi-target affinity and selectivity*, which is preprinted at [JCTC](https://pubs.acs.org/doi/10.1021/acs.jctc.6c00395).
 
 <p align="center"><img src="figures/fig-1.png" width="100%"></p>
 
@@ -195,14 +195,16 @@ bash training_scripts/train_dit.sh [YOUR IP ADDRESS OF PROCESS 0] [NUM PROCESSES
 
 ## Citation
 ```
-@article{li2025molsculptor,
-  title={MolSculptor: an adaptive diffusion-evolution framework enabling generative drug design for multi-target affinity and selectivity},
-  author={Li, Yanheng and Lin, Xiaohan and Hao, Yize and Zhang, Jun and Wu, Yundong and Gao, Yi Qin},
-  year={2025}
+@article{li2026molsculptor,
+  title={MolSculptor: An Adaptive Diffusion--Evolution Framework Enabling Generative Drug Design for Multitarget Affinity and Selectivity},
+  author={Li, Yanheng and Dong, Haojia and Lin, Xiaohan and Hao, Yize and Xue, Yue and Zhang, Jun and Wu, Yundong and Zhou, Jinming and Gao, Yi Qin},
+  journal={Journal of Chemical Theory and Computation},
+  year={2026},
+  publisher={ACS Publications}
 }
 ```
 ## Contact
-For questions or further information, please contact [gaoyq@pku.edu.cn](gaoyq@pku.edu.cn) or [jzhang@cpl.ac.cn](jzhang@cpl.ac.cn).
+For questions or further information, please contact [gaoyq@pku.edu.cn](gaoyq@pku.edu.cn) or [grlyh@pku.edu.cn](grlyh@pku.edu.cn).
 
 
 
